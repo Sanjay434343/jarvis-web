@@ -116,26 +116,31 @@
             } else if (message.includes('what is') || message.includes('who is') || message.includes('what are')) {
                 speak("This is what I found on the internet regarding " + message);
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
-            } else if (message.includes('wikipedia')|| message.includes('who is') || message.includes('what are')) {
+            } else if (message.includes('wikipedia')) {
                 const query = message.replace("wikipedia", "").trim();
                 fetchWikipediaSummary(query);
-            } else if (message.includes('what is')||message.includes('time')) {
+            } else if (message.includes('time')) {
                 const time = new Date().toLocaleTimeString();
                 speak("The current time is " + time);
-            } else if (message.includes('what is')||message.includes('date')) {
+            } else if (message.includes('date')) {
                 const date = new Date().toLocaleDateString();
                 speak("Today's date is " + date);
             } else if (message.includes('calculator')) {
                 speak("Opening Calculator");
                 window.open('Calculator:///');
+            } else if (message.includes('play')) {
+                const query = message.replace("play", "").trim();
+                openYouTubeAndPlay(query);
             } else {
                 speak("I found some information for " + message + " on Google");
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
             }
         }
 
-      
-        
+        function openYouTubeAndPlay(query) {
+            const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+            window.open(searchUrl, "_blank");
+        }
 
         function fetchWikipediaSummary(query) {
             fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
