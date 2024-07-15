@@ -32,7 +32,7 @@
 
         function speak(text) {
             const text_speak = new SpeechSynthesisUtterance(text);
-            text_speak.rate = 1.2; // Faster speaking rate
+            text_speak.rate = 1.2;
             text_speak.volume = 1;
             text_speak.pitch = 1;
             window.speechSynthesis.speak(text_speak);
@@ -70,38 +70,45 @@
         };
 
         recognition.onerror = (event) => {
-            console.error("Speech recognition error detected: " + event.error);
-            content.textContent = "Error occurred in recognition: " + event.error;
+            content.textContent = "Error occurred: " + event.error;
             switch (event.error) {
                 case 'no-speech':
-                    speak("No speech was detected. Please try again.");
+                    speak("No speech detected. Please try again.");
                     break;
                 case 'audio-capture':
-                    speak("No microphone was found. Ensure that a microphone is installed and that microphone settings are configured correctly.");
+                    speak("No microphone found. Ensure that a microphone is installed and settings are correct.");
                     break;
                 case 'not-allowed':
-                    speak("Permission to use microphone is blocked. To change, go to chrome://settings/content/microphone");
+                    speak("Permission to use microphone is blocked. Check your browser settings.");
                     break;
                 default:
-                    speak("An error occurred during speech recognition: " + event.error);
+                    speak("An error occurred: " + event.error);
                     break;
             }
         };
 
+        let isListening = false;
+
         btn.addEventListener('click', () => {
-            content.textContent = "Listening...";
-            recognition.start();
+            if (!isListening) {
+                content.textContent = "Listening...";
+                recognition.start();
+                isListening = true;
+            } else {
+                recognition.stop();
+                isListening = false;
+                content.textContent = "Click here to speak";
+            }
         });
 
         function takeCommand(message) {
-            console.log("Message received: " + message);
             if (message.includes('jarvis')) {
-                speak("Hello Sir, How May I Help You?");
+                speak("Hello Sir, how may I help you?");
             } else if (message.includes("open google")) {
                 speak("Opening Google...");
                 window.open("https://google.com", "_blank");
             } else if (message.includes("open youtube")) {
-                speak("Opening Youtube...");
+                speak("Opening YouTube...");
                 window.open("https://youtube.com", "_blank");
             } else if (message.includes("open facebook")) {
                 speak("Opening Facebook...");
@@ -113,10 +120,10 @@
                 speak("This is what I found on Wikipedia regarding " + message);
                 window.open(`https://en.wikipedia.org/wiki/${message.replace("wikipedia", "").trim()}`, "_blank");
             } else if (message.includes('time')) {
-                const time = new Date().toLocaleString(undefined, { hour: "numeric", minute: "numeric" });
+                const time = new Date().toLocaleTimeString();
                 speak("The current time is " + time);
             } else if (message.includes('date')) {
-                const date = new Date().toLocaleString(undefined, { month: "short", day: "numeric" });
+                const date = new Date().toLocaleDateString();
                 speak("Today's date is " + date);
             } else if (message.includes('calculator')) {
                 speak("Opening Calculator");
