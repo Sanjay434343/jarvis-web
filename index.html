@@ -106,13 +106,13 @@
                 speak("Hello Sir, how may I help you?");
             } else if (message.includes("open google")) {
                 speak("Opening Google...");
-                window.open("https://google.com", "_blank");
+                window.open("google://", "_self"); // Attempt to open Google app
             } else if (message.includes("open youtube")) {
                 speak("Opening YouTube...");
-                window.open("https://youtube.com", "_blank");
+                window.open("youtube://", "_self"); // Attempt to open YouTube app
             } else if (message.includes("open facebook")) {
                 speak("Opening Facebook...");
-                window.open("https://facebook.com", "_blank");
+                window.open("fb://", "_self"); // Attempt to open Facebook app
             } else if (message.includes('what is') || message.includes('who is') || message.includes('what are')) {
                 speak("This is what I found on the internet regarding " + message);
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
