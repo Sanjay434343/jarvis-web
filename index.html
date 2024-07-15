@@ -142,12 +142,18 @@
             }
         }
 
-    function openApp(urlScheme) {
-    window.location.href = urlScheme; // Attempt to open the app using its URL scheme
+  function openApp(urlScheme) {
+    const fallbackUrl = "https://play.google.com/store/apps/details?id=com.google.android.youtube";
+
+    // Attempt to open the app using its URL scheme
+    window.location.href = urlScheme;
+
+    // Fallback to Play Store after a short delay (500ms)
     setTimeout(() => {
-        window.open("https://play.google.com/store/apps/details?id=com.google.android.youtube", "_blank"); // Fallback to Play Store
+        window.location.href = fallbackUrl;
     }, 500);
 }
+
 
 
         function fetchWeather(city) {
