@@ -104,15 +104,23 @@
         function takeCommand(message) {
             if (message.includes('jarvis')) {
                 speak("Hello Sir, how may I help you?");
+            } else if (message.includes("weather in")) {
+                const city = message.split("weather in ")[1].trim();
+                fetchWeather(city);
+            } else if (message.includes("uv index")) {
+                fetchUVIndex();
+            } else if (message.includes("air quality in")) {
+                const location = message.split("air quality in ")[1].trim();
+                fetchAirQuality(location);
             } else if (message.includes("open google")) {
                 speak("Opening Google...");
-                window.open("google://", "_self");
+                window.open("https://google.com", "_blank");
             } else if (message.includes("open youtube")) {
                 speak("Opening YouTube...");
-                window.open("youtube://", "_self");
+                openApp("youtube://");
             } else if (message.includes("open facebook")) {
                 speak("Opening Facebook...");
-                window.open("fb://", "_self");
+                openApp("fb://");
             } else if (message.includes('what is') || message.includes('who is') || message.includes('what are')) {
                 speak("This is what I found on the internet regarding " + message);
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
@@ -132,6 +140,67 @@
                 speak("I found some information for " + message + " on Google");
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
             }
+        }
+
+        function openApp(urlScheme) {
+            window.location.href = urlScheme;
+            setTimeout(() => {
+                window.open("https://play.google.com/store/apps/details?id=com.google.android.youtube", "_blank");
+            }, 500);
+        }
+
+        function fetchWeather(city) {
+            const apiKey = "97ed86b99fdcf738c7a080e0fa9fde20";
+            const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?&units=metric&q=${city}&appid=${apiKey}`;
+
+            fetch(weatherApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const description = data.weather[0].description;
+                    const temperature = data.main.temp;
+                    const humidity = data.main.humidity;
+                    const weatherInfo = `Currently in ${city}, it is ${description}. The temperature is ${temperature}°C and humidity is ${humidity}%.`;
+                    speak(weatherInfo);
+                })
+                .catch(error => {
+                    speak("Sorry, I couldn't fetch the weather information.");
+                    console.error("Error fetching weather data:", error);
+                });
+        }
+
+        function fetchUVIndex() {
+            const uvIndexApiKey = "2b758adf793858c56dcc8374e1458cb0";
+            const uvIndexApiUrl = `https://api.openweathermap.org/data/2.5/uvi?appid=${uvIndexApiKey}&lat={lat}&lon={lon}`;
+
+            // You need to obtain the user's location coordinates (lat, lon) to fetch UV index dynamically.
+            // For simplicity in this example, it's not included.
+            // You would typically use geolocation API to get user's current location.
+
+            // For demonstration, let's just speak a generic message.
+            speak("The UV index is currently not available.");
+        }
+
+        function fetchAirQuality(location) {
+            const airQualityApiKey = "675f28f8b2msh14170ae5bfaf7fdp1840f1jsna9cfabde7ef0";
+            const airQualityApiUrl = `https://air-quality.p.rapidapi.com/current/airquality?location=${location}`;
+
+            fetch(airQualityApiUrl, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': airQualityApiKey,
+                    'x-rapidapi-host': 'air-quality.p.rapidapi.com'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const airQuality = data.data.aqi;
+                    const airQualityInfo = `The Air Quality Index in ${location} is ${airQuality}.`;
+                    speak(airQualityInfo);
+                })
+                .catch(error => {
+                    speak("Sorry, I couldn't fetch the air quality information.");
+                    console.error("Error fetching air quality data:", error);
+                });
         }
 
         function fetchWikipediaSummary(query) {
