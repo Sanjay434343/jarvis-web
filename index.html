@@ -32,7 +32,7 @@
 
         function speak(text) {
             const text_speak = new SpeechSynthesisUtterance(text);
-            text_speak.rate = 1.2;
+            text_speak.rate = 1.2; // Faster speaking rate
             text_speak.volume = 1;
             text_speak.pitch = 1;
             window.speechSynthesis.speak(text_speak);
@@ -106,19 +106,19 @@
                 speak("Hello Sir, how may I help you?");
             } else if (message.includes("open google")) {
                 speak("Opening Google...");
-                window.open("google://", "_self"); // Attempt to open Google app
+                window.open("google://", "_self");
             } else if (message.includes("open youtube")) {
                 speak("Opening YouTube...");
-                window.open("youtube://", "_self"); // Attempt to open YouTube app
+                window.open("youtube://", "_self");
             } else if (message.includes("open facebook")) {
                 speak("Opening Facebook...");
-                window.open("fb://", "_self"); // Attempt to open Facebook app
+                window.open("fb://", "_self");
             } else if (message.includes('what is') || message.includes('who is') || message.includes('what are')) {
                 speak("This is what I found on the internet regarding " + message);
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
             } else if (message.includes('wikipedia')) {
-                speak("This is what I found on Wikipedia regarding " + message);
-                window.open(`https://en.wikipedia.org/wiki/${message.replace("wikipedia", "").trim()}`, "_blank");
+                const query = message.replace("wikipedia", "").trim();
+                fetchWikipediaSummary(query);
             } else if (message.includes('time')) {
                 const time = new Date().toLocaleTimeString();
                 speak("The current time is " + time);
@@ -132,6 +132,22 @@
                 speak("I found some information for " + message + " on Google");
                 window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
             }
+        }
+
+        function fetchWikipediaSummary(query) {
+            fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.extract) {
+                        speak(data.extract);
+                    } else {
+                        speak("Sorry, I couldn't find any information on Wikipedia for " + query);
+                    }
+                })
+                .catch(error => {
+                    speak("Sorry, I encountered an error while fetching information from Wikipedia.");
+                    console.error("Error fetching Wikipedia summary:", error);
+                });
         }
     </script>
 </body>
